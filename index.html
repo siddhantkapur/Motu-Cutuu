@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>For You 💖</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #fad0c4 0%, #ffd1ff 100%);
+    font-family: 'Nunito', sans-serif;
+    overflow: hidden;
+}
+
+/* ---------- EMOJI BACKGROUND ---------- */
+#emoji-bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1;
+}
+.bg-emoji {
+    position: absolute;
+    bottom: -40px;
+    opacity: 0.6;
+    user-select: none;
+    animation: floatUp linear forwards;
+}
+@keyframes floatUp {
+    0% { transform: translateY(0) scale(0.5); opacity: 0; }
+    15% { opacity: 0.6; }
+    100% { transform: translateY(-110vh) scale(1.2); opacity: 0; }
+}
+/* ------------------------------------ */
+
+#start-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,0.98);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: opacity 0.8s ease-out;
+}
+.envelope-icon { font-size: 90px; animation: pulse 1.5s infinite; }
+.tap-text {
+    margin-top: 20px;
+    font-size: 1.6rem;
+    color: #e91e63;
+    font-family: 'Fredoka One', cursive;
+}
+.container {
+    position: relative;
+    z-index: 10;
+    background: rgba(255,255,255,0.9);
+    padding: 40px;
+    border-radius: 30px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    max-width: 90%;
+    width: 500px;
+    text-align: center;
+    display: none;
+    opacity: 0;
+    transition: opacity 1s ease-in;
+}
+.sticker { font-size: 100px; animation: float 3s ease-in-out infinite; }
+h1 { font-family: 'Fredoka One', cursive; color: #e91e63; }
+.typing-cursor::after { content: '|'; animation: blink 1s infinite; }
+
+.btn-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 30px;
+    height: 60px;
+    position: relative;
+}
+button {
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    font-family: 'Fredoka One', cursive;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    color: white;
+}
+#yesBtn { background: linear-gradient(45deg, #ff4081, #ff80ab); }
+#noBtn {
+    background: #b0bec5;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#success-message {
+    display: none;
+    position: fixed;
+    inset: 50% auto auto 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 30px;
+    border-radius: 30px;
+    box-shadow: 0 20px 60px rgba(255,64,129,0.4);
+    z-index: 20;
+    max-width: 600px;
+    width: 90%;
+}
+
+.gallery-container {
+    width: 100%;
+    height: 350px;
+    position: relative;
+    margin: 20px 0;
+    border-radius: 15px;
+    overflow: hidden;
+    background: black;
+}
+.gallery-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    position: absolute;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+.gallery-img.active { opacity: 1; }
+
+@keyframes pulse { 50% { transform: scale(1.1); } }
+@keyframes float { 50% { transform: translateY(-15px); } }
+@keyframes blink { 50% { opacity: 0; } }
+</style>
+</head>
+
+<body>
+
+<!-- BACKGROUND EMOJIS -->
+<div id="emoji-bg"></div>
+
+<!-- AUDIO -->
+<audio id="bgMusic" loop></audio>
+
+<!-- START OVERLAY -->
+<div id="start-overlay" onclick="startProposal()">
+    <div class="envelope-icon">💖</div>
+    <div class="tap-text">Tap to open 💕</div>
+</div>
+
+<!-- MAIN QUESTION -->
+<div class="container" id="main-content">
+    <div class="sticker">🥰</div>
+    <h1>Hey you, My Cutuu Baby… 💗</h1>
+    <h2 id="typing-text" class="typing-cursor"></h2>
+
+    <div class="btn-container">
+        <button id="yesBtn" onclick="acceptProposal()">Yes! 🥺💗</button>
+        <button id="noBtn" onmouseover="moveNoButton()">No 😳</button>
+    </div>
+</div>
+
+<!-- SUCCESS -->
+<div id="success-message">
+    <div class="sticker">💞🥹</div>
+    <h1>Yayyyy!! I LOVE YOU 🥺💗💍✨</h1>
+    <p>Forever us 🫶🌙</p>
+
+    <div class="gallery-container">
+        <img class="gallery-img active">
+        <img class="gallery-img">
+        <img class="gallery-img">
+        <img class="gallery-img">
+        <img class="gallery-img">
+        <img class="gallery-img">
+        <img class="gallery-img">
+        <img class="gallery-img">
+    </div>
+
+    <p style="margin-top:15px;font-size:1.1rem;color:#ff4081;">
+        I choose you. Every day. 🫶💍
+    </p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<script>
+/* ---------- LOAD BASE64 AUDIO ---------- */
+fetch("chaar_kadam_audio_base64.json")
+  .then(res => res.json())
+  .then(data => {
+      const music = document.getElementById("bgMusic");
+      music.src = data.audio;
+      music.load();
+  });
+
+/* ---------- IMAGE FILES ---------- */
+const IMAGE_FILES = [
+  "IMG_5986.json",
+  "IMG_6190.json",
+  "IMG_6174.json",
+  "IMG_6142.json",
+  "IMG_6106.json",
+  "IMG_6073.json",
+  "IMG_6051.json",
+  "IMG_5890.json"
+];
+
+const galleryImgs = document.querySelectorAll(".gallery-img");
+
+Promise.all(
+    IMAGE_FILES.map(f => fetch(f).then(r => r.json()))
+).then(data => {
+    galleryImgs.forEach((img, i) => {
+        img.src = data[i % data.length].image;
+    });
+});
+
+/* ---------- INTERACTION ---------- */
+const overlay = document.getElementById("start-overlay");
+const container = document.getElementById("main-content");
+const typing = document.getElementById("typing-text");
+const music = document.getElementById("bgMusic");
+
+const text = "Will you be my Valentine forever? 💕🌸";
+let i = 0;
+
+function startProposal() {
+    music.play().catch(()=>{});
+    overlay.style.opacity = 0;
+    setTimeout(() => {
+        overlay.style.display = "none";
+        container.style.display = "block";
+        container.style.opacity = 1;
+        typeText();
+    }, 800);
+}
+
+function typeText() {
+    if (i < text.length) {
+        typing.innerHTML += text.charAt(i++);
+        setTimeout(typeText, 80);
+    } else {
+        typing.classList.remove("typing-cursor");
+    }
+}
+
+const noTexts = ["No 😳","Umm… 🙈","Think again 🥺","Plsss 🥹💗","Okay fine 😌"];
+let nt = 0;
+
+function moveNoButton() {
+    const noBtn = document.getElementById("noBtn");
+    noBtn.style.left = Math.random() * (window.innerWidth - 100) + "px";
+    noBtn.style.top = Math.random() * (window.innerHeight - 50) + "px";
+    noBtn.style.position = "fixed";
+    noBtn.innerText = noTexts[++nt % noTexts.length];
+}
+
+function acceptProposal() {
+    container.style.display = "none";
+    document.getElementById("success-message").style.display = "block";
+    startSlideshow();
+
+    const end = Date.now() + 5000;
+    (function frame() {
+        confetti({ particleCount: 6, spread: 70, origin: { x: Math.random(), y: 0.6 } });
+        if (Date.now() < end) requestAnimationFrame(frame);
+    })();
+}
+
+function startSlideshow() {
+    let idx = 0;
+    setInterval(() => {
+        galleryImgs[idx].classList.remove("active");
+        idx = (idx + 1) % galleryImgs.length;
+        galleryImgs[idx].classList.add("active");
+    }, 3000);
+}
+
+/* ---------- BACKGROUND EMOJI SPAWNER ---------- */
+const bgEmojis = ["💗","💖","💞","🫶","✨","🌙","⭐","🌸","🌹"];
+
+function spawnEmoji() {
+    const emoji = document.createElement("div");
+    emoji.className = "bg-emoji";
+    emoji.innerText = bgEmojis[Math.floor(Math.random() * bgEmojis.length)];
+    emoji.style.left = Math.random() * 100 + "vw";
+    emoji.style.fontSize = Math.random() * 20 + 18 + "px";
+    emoji.style.animationDuration = Math.random() * 6 + 6 + "s";
+    document.getElementById("emoji-bg").appendChild(emoji);
+    setTimeout(() => emoji.remove(), 12000);
+}
+setInterval(spawnEmoji, 500);
+</script>
+
+</body>
+</html>
